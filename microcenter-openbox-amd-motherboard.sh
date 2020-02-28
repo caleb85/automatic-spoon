@@ -15,7 +15,7 @@ echo "$(tail -n +3 current.md)" > current.md
 #if old.md does not exist, create old.md and exit.
 test -s old.md
 fo=$?
-if [ fo = 1]; then
+if [[ $fo = 1 ]]; then
 	mv current.md old.md
 	exit
 fi
@@ -23,16 +23,22 @@ fi
 cur=$(cat current.md | sed 's/[^0-9]*//g')
 old=$(cat old.md | sed 's/[^0-9]*//g')
 #this if statement compares the numbers and acts accordingly
-if [ cur > old ]; then
-	echo "current data is larger than the old data a new item is in stock pushbullet notification to phone needed"
-elif [ cur < old ]; then
+echo "old data is $old"
+echo "current data is $cur"
+if [ $cur -gt $old ]; then
+	#Simple pushbullet notification to all your devices that the motherboard is in stock
+	curl --header 'Access-Token: <put pushbullet token here>' \
+     --header 'Content-Type: application/json' \
+     --data-binary '{"body":"New openbox AMD motherboard in stock!","title":"Microcenter Update","type":"note"}' \
+     --request POST \
+     https://api.pushbullet.com/v2/pushes
+elif [ $cur -lt $old ]; then
 	echo "current data is smaller than the old data  stock has shrunk"
-elif [ cur = old ]; then
+elif [ $cur -eq $old ]; then
 	echo "stock is the same"
 else
 	echo "If you see this your are going to have a bad time"
 fi
 #replace the current data with the old data for later
 mv current.md old.md
-rm current.md
 exit
