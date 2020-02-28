@@ -23,8 +23,6 @@ fi
 cur=$(cat current.md | sed 's/[^0-9]*//g')
 old=$(cat old.md | sed 's/[^0-9]*//g')
 #this if statement compares the numbers and acts accordingly
-echo "old data is $old"
-echo "current data is $cur"
 if [ $cur -gt $old ]; then
 	#Simple pushbullet notification to all your devices that the motherboard is in stock
 	curl --header 'Access-Token: <put pushbullet token here>' \
